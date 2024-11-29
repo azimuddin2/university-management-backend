@@ -11,15 +11,21 @@ const userNameSchema = new Schema<UserName>({
     type: String,
     required: [true, 'First Name is required'],
     trim: true,
+    minlength: [3, 'The length of first name can be minimum 3 characters'],
+    maxlength: [20, 'The length of first name can be maximum 20 characters'],
   },
   middleName: {
     type: String,
     trim: true,
+    minlength: [3, 'The length of middle name can be minimum 3 characters'],
+    maxlength: [20, 'The length of middle name can be maximum 20 characters'],
   },
   lastName: {
     type: String,
     required: [true, 'Last Name is required'],
     trim: true,
+    minlength: [3, 'The length of last name can be minimum 3 characters'],
+    maxlength: [20, 'The length of last name can be maximum 20 characters'],
   },
 });
 
@@ -28,6 +34,8 @@ const guardianSchema = new Schema<Guardian>({
     type: String,
     required: [true, 'Father name is required.'],
     trim: true,
+    minlength: [3, 'The length of father name can be minimum 3 characters'],
+    maxlength: [20, 'The length of father name can be maximum 20 characters'],
   },
   fatherOccupation: {
     type: String,
@@ -45,17 +53,19 @@ const guardianSchema = new Schema<Guardian>({
       message: (props) => `${props.value} is not a valid contact number!`,
     },
   },
-  matherName: {
+  motherName: {
     type: String,
     required: [true, 'Mother name is required.'],
     trim: true,
+    minlength: [3, 'The length of mother name can be minimum 3 characters'],
+    maxlength: [20, 'The length of mother name can be maximum 20 characters'],
   },
-  matherOccupation: {
+  motherOccupation: {
     type: String,
     required: [true, 'Mother occupation is required.'],
     trim: true,
   },
-  matherContactNo: {
+  motherContactNo: {
     type: String,
     required: [true, 'Mother contact number is required.'],
     trim: true,
@@ -73,6 +83,8 @@ const localGuardianSchema = new Schema<LocalGuardian>({
     type: String,
     required: [true, 'Guardian name is required.'],
     trim: true,
+    minlength: [3, 'The length of Guardian name can be minimum 3 characters'],
+    maxlength: [20, 'The length of Guardian name can be maximum 20 characters'],
   },
   occupation: {
     type: String,
@@ -99,8 +111,16 @@ const localGuardianSchema = new Schema<LocalGuardian>({
 
 const studentSchema = new Schema<Student>(
   {
-    id: { type: String },
-    name: userNameSchema,
+    id: {
+      type: String,
+      required: [true, 'Student Id is required'],
+      trim: true,
+      unique: true,
+    },
+    name: {
+      type: userNameSchema,
+      required: [true, 'Name is required'],
+    },
     email: {
       type: String,
       required: [true, 'Student email is required'],
@@ -114,19 +134,48 @@ const studentSchema = new Schema<Student>(
         message: 'Please enter a valid email',
       },
     },
-    gender: ['male', 'female'],
-    dateOfBirth: { type: String },
+    gender: {
+      type: String,
+      enum: {
+        values: ['male', 'female', 'other'],
+        message: '{VALUE} is not valid',
+      },
+      required: true,
+    },
+    dateOfBirth: {
+      type: String,
+      required: [true, 'Date of birth field required'],
+    },
     contactNo: {
       type: String,
       required: [true, 'Contact No is required'],
       trim: true,
+      validate: {
+        validator: function (v) {
+          return /^\+?[0-9]{10,15}$/.test(v);
+        },
+        message: (props) => `${props.value} is not a valid contact number!`,
+      },
     },
     emergencyContactNo: {
       type: String,
       required: [true, 'Emergency Contact number is required'],
       trim: true,
+      validate: {
+        validator: function (v) {
+          return /^\+?[0-9]{10,15}$/.test(v);
+        },
+        message: (props) =>
+          `${props.value} is not a valid emergency contact number!`,
+      },
     },
-    bloodGroup: ['A+', 'A-', 'AB+', 'AB-', 'B+', 'B-', 'O+', 'O-'],
+    bloodGroup: {
+      type: String,
+      enum: {
+        values: ['A+', 'A-', 'AB+', 'AB-', 'B+', 'B-', 'O+', 'O-'],
+        message: '{VALUE} is not valid',
+      },
+    },
     profileImg: { type: String },
     presentAddress: {
       type: String,
@@ -138,9 +187,19 @@ const studentSchema = new Schema<Student>(
       required: [true, 'Permanent address is required'],
       trim: true,
     },
-    guardian: guardianSchema,
-    localGuardian: localGuardianSchema,
-    isActive: ['active', 'block'],
+    guardian: {
+      type: guardianSchema,
+      required: [true, 'Guardian is required'],
+    },
+    localGuardian: {
+      type: localGuardianSchema,
+      required: [true, 'Local guardian is required'],
+    },
+    isActive: {
+      type: String,
+      enum: ['active', 'block'],
+      default: 'active',
+    },
   },
   { timestamps: true }
 );

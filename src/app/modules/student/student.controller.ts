@@ -16,7 +16,7 @@ const createStudent = async (req: Request, res: Response) => {
 
     res.status(500).json({
       success: false,
-      message: err.message || 'Product creation failed',
+      message: 'Student creation failed',
       error: err,
       stack: err.stack,
     });
@@ -37,7 +37,7 @@ const getAllStudents = async (req: Request, res: Response): Promise<void> => {
 
     res.status(500).json({
       success: false,
-      message: err.message || 'Failed to retrieve students',
+      message: 'Failed to retrieve students',
       err: err,
       stack: err.stack,
     });
@@ -59,7 +59,7 @@ const getSingleStudent = async (req: Request, res: Response): Promise<void> => {
 
     res.status(500).json({
       success: false,
-      message: err.message || 'Failed to retrieve student',
+      message: 'Failed to retrieve student',
       err: err,
       stack: err.stack,
     });
