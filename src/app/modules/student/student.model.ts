@@ -129,7 +129,7 @@ const studentSchema = new Schema<Student>(
       lowercase: true,
       validate: {
         validator: function (v) {
-          return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(v);
+          return /^\w+([-]?\w+)*@\w+([-]?\w+)*(\.\w{2,3})+$/.test(v);
         },
         message: 'Please enter a valid email',
       },
@@ -145,6 +145,7 @@ const studentSchema = new Schema<Student>(
     dateOfBirth: {
       type: String,
       required: [true, 'Date of birth field required'],
+      trim: true,
     },
     contactNo: {
       type: String,
@@ -176,7 +177,10 @@ const studentSchema = new Schema<Student>(
         message: '{VALUE} is not valid',
       },
     },
-    profileImg: { type: String },
+    profileImg: {
+      type: String,
+      trim: true,
+    },
     presentAddress: {
       type: String,
       required: [true, 'Present address is required'],
