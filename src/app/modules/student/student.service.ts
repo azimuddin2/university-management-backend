@@ -1,21 +1,21 @@
-import { Student } from './student.interface';
-import StudentModel from './student.model';
+import { TStudent } from './student.interface';
+import Student from './student.model';
 
-const createStudentIntoDB = async (student: Student) => {
+const createStudentIntoDB = async (student: TStudent) => {
   const filter = { email: student.email };
-  const studentExists = await StudentModel.exists(filter);
+  const studentExists = await Student.exists(filter);
 
   if (studentExists) {
     throw new Error(`${student.email} already exists`);
   }
 
-  const newStudent = await StudentModel.create(student);
+  const newStudent = await Student.create(student);
 
   return newStudent;
 };
 
-const getAllStudentsFromDB = async (): Promise<Student[]> => {
-  const students: Student[] = await StudentModel.find();
+const getAllStudentsFromDB = async (): Promise<TStudent[]> => {
+  const students: TStudent[] = await Student.find();
 
   if (!students || students.length === 0) {
     throw new Error('No students found');
@@ -24,8 +24,8 @@ const getAllStudentsFromDB = async (): Promise<Student[]> => {
   return students;
 };
 
-const getSingleStudentFromDB = async (id: string): Promise<Student | null> => {
-  const student = await StudentModel.findOne({ id });
+const getSingleStudentFromDB = async (id: string): Promise<TStudent | null> => {
+  const student = await Student.findOne({ id });
 
   if (!student) {
     throw new Error(`Student ID ${id} does not exists.`);

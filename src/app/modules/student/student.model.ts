@@ -1,12 +1,12 @@
 import { model, Schema } from 'mongoose';
 import {
-  Guardian,
-  LocalGuardian,
-  Student,
-  UserName,
+  TGuardian,
+  TLocalGuardian,
+  TStudent,
+  TUserName,
 } from './student.interface';
 
-const userNameSchema = new Schema<UserName>({
+const userNameSchema = new Schema<TUserName>({
   firstName: {
     type: String,
     required: [true, 'First Name is required'],
@@ -29,7 +29,7 @@ const userNameSchema = new Schema<UserName>({
   },
 });
 
-const guardianSchema = new Schema<Guardian>({
+const guardianSchema = new Schema<TGuardian>({
   fatherName: {
     type: String,
     required: [true, 'Father name is required.'],
@@ -78,7 +78,7 @@ const guardianSchema = new Schema<Guardian>({
   },
 });
 
-const localGuardianSchema = new Schema<LocalGuardian>({
+const localGuardianSchema = new Schema<TLocalGuardian>({
   name: {
     type: String,
     required: [true, 'Guardian name is required.'],
@@ -109,7 +109,7 @@ const localGuardianSchema = new Schema<LocalGuardian>({
   },
 });
 
-const studentSchema = new Schema<Student>(
+const studentSchema = new Schema<TStudent>(
   {
     id: {
       type: String,
@@ -208,6 +208,6 @@ const studentSchema = new Schema<Student>(
   { timestamps: true }
 );
 
-const StudentModel = model<Student>('Student', studentSchema);
+const Student = model<TStudent>('Student', studentSchema);
 
-export default StudentModel;
+export default Student;
