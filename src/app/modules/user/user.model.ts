@@ -5,7 +5,7 @@ const userSchema = new Schema<TUser>(
   {
     id: {
       type: String,
-      required: [true, 'User ID is required'],
+      required: [true, 'User id is required'],
       trim: true,
       unique: true,
     },

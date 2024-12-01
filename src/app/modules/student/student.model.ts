@@ -117,6 +117,12 @@ const studentSchema = new Schema<TStudent>(
       trim: true,
       unique: true,
     },
+    user: {
+      type: Schema.Types.ObjectId,
+      required: [true, 'User id is required'],
+      unique: true,
+      ref: 'User',
+    },
     name: {
       type: userNameSchema,
       required: [true, 'Name is required'],
@@ -199,10 +205,9 @@ const studentSchema = new Schema<TStudent>(
       type: localGuardianSchema,
       required: [true, 'Local guardian is required'],
     },
-    isActive: {
-      type: String,
-      enum: ['active', 'block'],
-      default: 'active',
+    isDeleted: {
+      type: Boolean,
+      default: false,
     },
   },
   { timestamps: true }

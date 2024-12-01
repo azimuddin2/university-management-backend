@@ -1,19 +1,6 @@
 import { TStudent } from './student.interface';
 import Student from './student.model';
 
-const createStudentIntoDB = async (student: TStudent) => {
-  const filter = { email: student.email };
-  const studentExists = await Student.exists(filter);
-
-  if (studentExists) {
-    throw new Error(`${student.email} already exists`);
-  }
-
-  const newStudent = await Student.create(student);
-
-  return newStudent;
-};
-
 const getAllStudentsFromDB = async (): Promise<TStudent[]> => {
   const students: TStudent[] = await Student.find();
 
@@ -35,7 +22,6 @@ const getSingleStudentFromDB = async (id: string): Promise<TStudent | null> => {
 };
 
 export const StudentServices = {
-  createStudentIntoDB,
   getAllStudentsFromDB,
   getSingleStudentFromDB,
 };
