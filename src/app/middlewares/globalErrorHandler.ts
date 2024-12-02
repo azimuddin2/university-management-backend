@@ -5,11 +5,11 @@ const globalErrorHandler = (
   req: Request,
   res: Response,
   next: NextFunction
-): any => {
+): void => {
   const statusCode = 500;
   const message = err.message || 'Something Went Wrong';
 
-  return res.status(statusCode).json({
+  res.status(statusCode).json({
     success: false,
     message,
     error: err,
