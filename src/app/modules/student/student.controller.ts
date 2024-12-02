@@ -1,7 +1,11 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { StudentServices } from './student.service';
 
-const getAllStudents = async (req: Request, res: Response): Promise<void> => {
+const getAllStudents = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
   try {
     const result = await StudentServices.getAllStudentsFromDB();
 
@@ -10,19 +14,16 @@ const getAllStudents = async (req: Request, res: Response): Promise<void> => {
       message: 'Students retrieved successfully',
       data: result,
     });
-  } catch (error: unknown) {
-    const err = error as Error;
-
-    res.status(500).json({
-      success: false,
-      message: 'Failed to retrieve students',
-      err: err,
-      stack: err.stack,
-    });
+  } catch (err) {
+    next(err);
   }
 };
 
-const getSingleStudent = async (req: Request, res: Response): Promise<void> => {
+const getSingleStudent = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> => {
   try {
     const { studentId } = req.params;
     const result = await StudentServices.getSingleStudentFromDB(studentId);
@@ -32,15 +33,8 @@ const getSingleStudent = async (req: Request, res: Response): Promise<void> => {
       message: 'Student retrieved successfully',
       data: result,
     });
-  } catch (error: unknown) {
-    const err = error as Error;
-
-    res.status(500).json({
-      success: false,
-      message: 'Failed to retrieve student',
-      err: err,
-      stack: err.stack,
-    });
+  } catch (err) {
+    next(err);
   }
 };
 
