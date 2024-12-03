@@ -60,7 +60,7 @@ const createStudentValidationSchema = z.object({
       name: userNameValidationSchema,
       email: z.string().email('Please enter a valid email'),
       gender: z.enum(['male', 'female', 'other']),
-      dateOfBirth: z.string(),
+      dateOfBirth: z.date().optional(),
       contactNo: z
         .string()
         .regex(/^\+?[0-9]{10,15}$/, 'Contact number is not valid'),
