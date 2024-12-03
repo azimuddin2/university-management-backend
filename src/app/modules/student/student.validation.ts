@@ -47,27 +47,38 @@ const localGuardianValidationSchema = z.object({
   address: z.string(),
 });
 
-const studentValidationSchema = z.object({
-  id: z.string(),
-  name: userNameValidationSchema,
-  email: z.string().email('Please enter a valid email'),
-  gender: z.enum(['male', 'female', 'other']),
-  dateOfBirth: z.string(),
-  contactNo: z
-    .string()
-    .regex(/^\+?[0-9]{10,15}$/, 'Contact number is not valid'),
-  emergencyContactNo: z
-    .string()
-    .regex(/^\+?[0-9]{10,15}$/, 'Emergency contact number is not valid'),
-  bloodGroup: z
-    .enum(['A+', 'A-', 'AB+', 'AB-', 'B+', 'B-', 'O+', 'O-'])
-    .optional(),
-  profileImg: z.string().optional(),
-  presentAddress: z.string(),
-  permanentAddress: z.string(),
-  guardian: guardianValidationSchema,
-  localGuardian: localGuardianValidationSchema,
-  isActive: z.enum(['active', 'block']).default('active'),
+const createStudentValidationSchema = z.object({
+  body: z.object({
+    password: z
+      .string({
+        invalid_type_error: 'Password must be string',
+      })
+      .min(6, { message: 'Password can be minimum 6 characters' })
+      .max(20, { message: 'Password can not be more than 20 characters' })
+      .optional(),
+    student: z.object({
+      name: userNameValidationSchema,
+      email: z.string().email('Please enter a valid email'),
+      gender: z.enum(['male', 'female', 'other']),
+      dateOfBirth: z.string(),
+      contactNo: z
+        .string()
+        .regex(/^\+?[0-9]{10,15}$/, 'Contact number is not valid'),
+      emergencyContactNo: z
+        .string()
+        .regex(/^\+?[0-9]{10,15}$/, 'Emergency contact number is not valid'),
+      bloodGroup: z
+        .enum(['A+', 'A-', 'AB+', 'AB-', 'B+', 'B-', 'O+', 'O-'])
+        .optional(),
+      profileImg: z.string().optional(),
+      presentAddress: z.string(),
+      permanentAddress: z.string(),
+      guardian: guardianValidationSchema,
+      localGuardian: localGuardianValidationSchema,
+    }),
+  }),
 });
 
-export default studentValidationSchema;
+export const StudentValidations = {
+  createStudentValidationSchema,
+};
