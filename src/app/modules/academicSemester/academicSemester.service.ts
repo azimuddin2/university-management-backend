@@ -27,7 +27,7 @@ const updateAcademicSemesterIntoDB = async (
 ) => {
   const isSemesterExists = await AcademicSemester.findById({ _id: id });
   if (!isSemesterExists) {
-    throw new Error(`semester id ${id} is not exists`);
+    throw new Error(`semester id ${id} does not exists`);
   }
 
   if (
