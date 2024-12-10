@@ -1,3 +1,4 @@
+import AppError from '../../errors/AppError';
 import { TAcademicFaculty } from './academicFaculty.interface';
 import { AcademicFaculty } from './academicFaculty.model';
 
@@ -13,6 +14,10 @@ const getAllAcademicFacultyFromDB = async () => {
 
 const getSingleAcademicFacultyFromDB = async (id: string) => {
   const result = await AcademicFaculty.findById(id);
+  if (!result) {
+    throw new AppError(404, `Academic Faculty id ${id} does not exists`);
+  }
+
   return result;
 };
 
@@ -22,7 +27,7 @@ const updateAcademicFacultyIntoDB = async (
 ) => {
   const isFacultyExists = await AcademicFaculty.findById({ _id: id });
   if (!isFacultyExists) {
-    throw new Error(`semester id ${id} does not exists`);
+    throw new AppError(404, `Academic faculty id ${id} does not exists`);
   }
 
   const result = await AcademicFaculty.findByIdAndUpdate({ _id: id }, payload, {

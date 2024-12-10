@@ -1,3 +1,4 @@
+import AppError from '../../errors/AppError';
 import { TAcademicDepartment } from './academicDepartment.interface';
 import { AcademicDepartment } from './academicDepartment.model';
 
@@ -7,15 +8,16 @@ const createAcademicDepartmentIntoDB = async (payload: TAcademicDepartment) => {
 };
 
 const getAllAcademicDepartmentFromDB = async () => {
-  const result = await AcademicDepartment.find();
+  const result = await AcademicDepartment.find().populate('academicFaculty');
   return result;
 };
 
 const getSingleAcademicDepartmentFromDB = async (id: string) => {
-  const result = await AcademicDepartment.findById(id);
+  const result =
+    await AcademicDepartment.findById(id).populate('academicFaculty');
 
   if (!result) {
-    throw new Error(`Department id ${id} doest not exits!`);
+    throw new AppError(404, `Department id ${id} doest not exits!`);
   }
 
   return result;
