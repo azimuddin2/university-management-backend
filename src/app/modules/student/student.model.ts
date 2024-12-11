@@ -5,6 +5,7 @@ import {
   TStudent,
   TUserName,
 } from './student.interface';
+import AppError from '../../errors/AppError';
 
 const userNameSchema = new Schema<TUserName>({
   firstName: {
@@ -220,6 +221,18 @@ const studentSchema = new Schema<TStudent>(
   },
   { timestamps: true }
 );
+
+studentSchema.pre('findOneAndUpdate', async function (next) {
+  const query = this.getQuery();
+
+  const isStudentExist = await Student.findOne(query);
+
+  if (!isStudentExist) {
+    throw new AppError(404, 'This student does not exist!');
+  }
+
+  next();
+});
 
 const Student = model<TStudent>('Student', studentSchema);
 
