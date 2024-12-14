@@ -3,10 +3,34 @@ import AppError from '../../errors/AppError';
 import { TStudent } from './student.interface';
 import Student from './student.model';
 import User from '../user/user.model';
+import QueryBuilder from '../../builder/QueryBuilder';
+import { studentSearchableFields } from './student.constant';
 
 const getAllStudentsFromDB = async (
   query: Record<string, unknown>
 ): Promise<TStudent[]> => {
+  const studentQuery = new QueryBuilder(
+    Student.find()
+      .populate('admissionSemester')
+      .populate({
+        path: 'academicDepartment',
+        populate: {
+          path: 'academicFaculty',
+        },
+      }),
+    query
+  )
+    .search(studentSearchableFields)
+    .filter()
+    .sort()
+    .paginate()
+    .fields();
+
+  const result = await studentQuery.modelQuery;
+
+  return result;
+
+  /*
   const queryObj = { ...query };
 
   // BASE QUERY
@@ -54,6 +78,7 @@ const getAllStudentsFromDB = async (
 
   const sortQuery = filterQuery.sort(sort);
 
+  // PAGINATION FUNCTIONALITY
   let page = 1;
   let limit = 1;
   let skip = 0;
@@ -82,6 +107,7 @@ const getAllStudentsFromDB = async (
   const fieldQuery = await limitQuery.select(fields);
 
   return fieldQuery;
+  */
 };
 
 const getSingleStudentFromDB = async (id: string): Promise<TStudent | null> => {
