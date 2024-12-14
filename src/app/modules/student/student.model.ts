@@ -130,7 +130,7 @@ const studentSchema = new Schema<TStudent>(
     },
     email: {
       type: String,
-      required: [true, 'Student email is required'],
+      required: [true, 'Email is required'],
       trim: true,
       unique: true,
       lowercase: true,
@@ -219,11 +219,21 @@ const studentSchema = new Schema<TStudent>(
       default: false,
     },
   },
-  { timestamps: true }
+  {
+    toJSON: {
+      virtuals: true,
+    },
+  }
 );
 
 studentSchema.virtual('fullName').get(function () {
-  return this?.name?.firstName + this?.name?.middleName + this?.name?.lastName;
+  return (
+    this?.name?.firstName +
+    ' ' +
+    this?.name?.middleName +
+    ' ' +
+    this?.name?.lastName
+  );
 });
 
 studentSchema.pre('findOneAndUpdate', async function (next) {

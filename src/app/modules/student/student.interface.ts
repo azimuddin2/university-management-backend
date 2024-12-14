@@ -6,6 +6,10 @@ export type TUserName = {
   lastName: string;
 };
 
+export type TGender = 'male' | 'female' | 'other';
+
+type TBloodGroup = 'A+' | 'A-' | 'B+' | 'B-' | 'AB+' | 'AB-' | 'O+' | 'O-';
+
 export type TGuardian = {
   fatherName: string;
   fatherOccupation: string;
@@ -27,11 +31,11 @@ export type TStudent = {
   user: Types.ObjectId;
   name: TUserName;
   email: string;
-  gender: 'male' | 'female' | 'other';
+  gender: TGender;
   dateOfBirth: Date;
   contactNo: string;
   emergencyContactNo: string;
-  bloodGroup?: 'A+' | 'A-' | 'B+' | 'B-' | 'AB+' | 'AB-' | 'O+' | 'O-';
+  bloodGroup?: TBloodGroup;
   profileImg?: string;
   presentAddress: string;
   permanentAddress: string;
