@@ -18,8 +18,8 @@ const userNameSchema = new Schema<TUserName>({
   middleName: {
     type: String,
     trim: true,
-    minlength: [3, 'The length of middle name can be minimum 3 characters'],
-    maxlength: [20, 'The length of middle name can be maximum 20 characters'],
+    // minlength: [3, 'The length of middle name can be minimum 3 characters'],
+    // maxlength: [20, 'The length of middle name can be maximum 20 characters'],
   },
   lastName: {
     type: String,
@@ -221,6 +221,10 @@ const studentSchema = new Schema<TStudent>(
   },
   { timestamps: true }
 );
+
+studentSchema.virtual('fullName').get(function () {
+  return this?.name?.firstName + this?.name?.middleName + this?.name?.lastName;
+});
 
 studentSchema.pre('findOneAndUpdate', async function (next) {
   const query = this.getQuery();
