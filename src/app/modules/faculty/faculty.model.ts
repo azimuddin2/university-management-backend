@@ -1,6 +1,7 @@
 import { model, Schema } from 'mongoose';
 import { TFaculty, TUserName } from './faculty.interface';
 import { BloodGroup, Gender } from './faculty.constant';
+import AppError from '../../errors/AppError';
 
 const userNameSchema = new Schema<TUserName>({
   firstName: {
@@ -141,6 +142,42 @@ facultySchema.virtual('fullName').get(function () {
     ' ' +
     this?.name?.lastName
   );
+});
+
+facultySchema.pre('save', async function (next) {
+  const isDepartmentExist = await Faculty.findOne({
+    email: this.email,
+  });
+
+  if (isDepartmentExist) {
+    throw new AppError(403, 'This faculty is already exist!');
+  }
+
+  next();
+});
+
+facultySchema.pre('findOneAndUpdate', async function (next) {
+  const query = this.getQuery();
+
+  const isDepartmentExist = await Faculty.findOne(query);
+
+  if (!isDepartmentExist) {
+    throw new AppError(404, 'This faculty does not exist!');
+  }
+
+  next();
+});
+
+facultySchema.pre('findOneAndDelete', async function (next) {
+  const query = this.getQuery();
+
+  const isDepartmentExist = await Faculty.findOne(query);
+
+  if (!isDepartmentExist) {
+    throw new AppError(404, 'This faculty does not exist!');
+  }
+
+  next();
 });
 
 export const Faculty = model<TFaculty>('Faculty', facultySchema);
