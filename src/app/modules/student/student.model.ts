@@ -1,5 +1,6 @@
 import { model, Schema } from 'mongoose';
 import {
+  StudentModel,
   TGuardian,
   TLocalGuardian,
   TStudent,
@@ -110,7 +111,7 @@ const localGuardianSchema = new Schema<TLocalGuardian>({
   },
 });
 
-const studentSchema = new Schema<TStudent>(
+const studentSchema = new Schema<TStudent, StudentModel>(
   {
     id: {
       type: String,
@@ -248,6 +249,6 @@ studentSchema.pre('findOneAndUpdate', async function (next) {
   next();
 });
 
-const Student = model<TStudent>('Student', studentSchema);
+const Student = model<TStudent, StudentModel>('Student', studentSchema);
 
 export default Student;

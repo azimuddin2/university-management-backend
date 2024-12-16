@@ -1,6 +1,6 @@
 import { model, Schema } from 'mongoose';
-import { FacultyModel, TFaculty, TUserName } from './faculty.interface';
-import { BloodGroup, Gender } from './faculty.constant';
+import { AdminModel, TAdmin, TUserName } from './admin.interface';
+import { BloodGroup, Gender } from './admin.constant';
 import AppError from '../../errors/AppError';
 
 const userNameSchema = new Schema<TUserName>({
@@ -24,11 +24,11 @@ const userNameSchema = new Schema<TUserName>({
   },
 });
 
-const facultySchema = new Schema<TFaculty, FacultyModel>(
+const adminSchema = new Schema<TAdmin, AdminModel>(
   {
     id: {
       type: String,
-      required: [true, 'Faculty Id is required'],
+      required: [true, 'Admin Id is required'],
       trim: true,
       unique: true,
     },
@@ -116,10 +116,6 @@ const facultySchema = new Schema<TFaculty, FacultyModel>(
       type: String,
       trim: true,
     },
-    academicDepartment: {
-      type: Schema.Types.ObjectId,
-      ref: 'AcademicDepartment',
-    },
     isDeleted: {
       type: Boolean,
       default: false,
@@ -132,50 +128,40 @@ const facultySchema = new Schema<TFaculty, FacultyModel>(
   }
 );
 
-facultySchema.virtual('fullName').get(function () {
-  return (
-    this?.name?.firstName +
-    ' ' +
-    this?.name?.middleName +
-    ' ' +
-    this?.name?.lastName
-  );
-});
-
-facultySchema.pre('save', async function (next) {
-  const isFacultyExist = await Faculty.findOne({
+adminSchema.pre('save', async function (next) {
+  const isAdminExist = await Admin.findOne({
     email: this.email,
   });
 
-  if (isFacultyExist) {
-    throw new AppError(403, 'This faculty is already exist!');
+  if (isAdminExist) {
+    throw new AppError(403, 'This admin email is already exist!');
   }
 
   next();
 });
 
-facultySchema.pre('findOneAndUpdate', async function (next) {
+adminSchema.pre('findOneAndUpdate', async function (next) {
   const query = this.getQuery();
 
-  const isFacultyExist = await Faculty.findOne(query);
+  const isAdminExist = await Admin.findOne(query);
 
-  if (!isFacultyExist) {
-    throw new AppError(404, 'This faculty does not exist!');
+  if (!isAdminExist) {
+    throw new AppError(404, 'This admin does not exist!');
   }
 
   next();
 });
 
-facultySchema.pre('findOneAndDelete', async function (next) {
+adminSchema.pre('findOneAndDelete', async function (next) {
   const query = this.getQuery();
 
-  const isFacultyExist = await Faculty.findOne(query);
+  const isAdminExist = await Admin.findOne(query);
 
-  if (!isFacultyExist) {
-    throw new AppError(404, 'This faculty does not exist!');
+  if (!isAdminExist) {
+    throw new AppError(404, 'This admin does not exist!');
   }
 
   next();
 });
 
-export const Faculty = model<TFaculty, FacultyModel>('Faculty', facultySchema);
+export const Admin = model<TAdmin, AdminModel>('Admin', adminSchema);
