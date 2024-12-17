@@ -22,7 +22,7 @@ const getAllAdminsFromDB = async (
 };
 
 const getSingleAdminFromDB = async (id: string): Promise<TAdmin | null> => {
-  const admin = await Admin.findOne({ id });
+  const admin = await Admin.findById(id);
 
   if (!admin) {
     throw new AppError(404, `This admin Id ${id} does not exists`);
@@ -44,7 +44,7 @@ const updateAdminIntoDB = async (id: string, payload: Partial<TAdmin>) => {
     }
   }
 
-  const result = await Admin.findOneAndUpdate({ id }, modifiedUpdatedData, {
+  const result = await Admin.findByIdAndUpdate(id, modifiedUpdatedData, {
     new: true,
     runValidators: true,
   });
@@ -58,8 +58,8 @@ const deleteAdminFromDB = async (id: string) => {
   try {
     session.startTransaction();
 
-    const deletedAdmin = await Admin.findOneAndUpdate(
-      { id },
+    const deletedAdmin = await Admin.findByIdAndUpdate(
+      id,
       { isDeleted: true },
       { new: true, session }
     );
@@ -67,8 +67,11 @@ const deleteAdminFromDB = async (id: string) => {
       throw new AppError(400, 'Failed to delete admin');
     }
 
-    const deletedUser = await User.findOneAndUpdate(
-      { id },
+    // get user _id from deletedAdmin
+    const userId = deletedAdmin.user;
+
+    const deletedUser = await User.findByIdAndUpdate(
+      userId,
       { isDeleted: true },
       { new: true, session }
     );

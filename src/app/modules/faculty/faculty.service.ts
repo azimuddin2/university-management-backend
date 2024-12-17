@@ -30,7 +30,7 @@ const getAllFacultiesFromDB = async (
 };
 
 const getSingleFacultyFromDB = async (id: string): Promise<TFaculty | null> => {
-  const faculty = await Faculty.findOne({ id }).populate({
+  const faculty = await Faculty.findById(id).populate({
     path: 'academicDepartment',
     populate: {
       path: 'academicFaculty',
@@ -57,7 +57,7 @@ const updateFacultyIntoDB = async (id: string, payload: Partial<TFaculty>) => {
     }
   }
 
-  const result = await Faculty.findOneAndUpdate({ id }, modifiedUpdatedData, {
+  const result = await Faculty.findByIdAndUpdate(id, modifiedUpdatedData, {
     new: true,
     runValidators: true,
   });
@@ -71,20 +71,25 @@ const deleteFacultyFromDB = async (id: string) => {
   try {
     session.startTransaction();
 
-    const deletedFaculty = await Faculty.findOneAndUpdate(
-      { id },
+    const deletedFaculty = await Faculty.findByIdAndUpdate(
+      id,
       { isDeleted: true },
       { new: true, session }
     );
+
     if (!deletedFaculty) {
       throw new AppError(400, 'Failed to delete faculty');
     }
 
-    const deletedUser = await User.findOneAndUpdate(
-      { id },
+    // get user _id from deletedFaculty
+    const userId = deletedFaculty.user;
+
+    const deletedUser = await User.findByIdAndUpdate(
+      userId,
       { isDeleted: true },
       { new: true, session }
     );
+    
     if (!deletedUser) {
       throw new AppError(400, 'Failed to delete user');
     }
