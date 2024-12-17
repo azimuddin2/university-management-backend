@@ -5,9 +5,7 @@ const createUserNameValidationSchema = z.object({
     .string()
     .min(3, 'The length of first name can be minimum 3 characters')
     .max(20, 'The length of first name can be maximum 20 characters'),
-  middleName: z
-    .string()
-    .optional(),
+  middleName: z.string().optional(),
   lastName: z
     .string()
     .min(3, 'The length of last name can be minimum 3 characters')
@@ -84,9 +82,7 @@ const updateUserNameValidationSchema = z.object({
     .min(3, 'The length of first name can be minimum 3 characters')
     .max(20, 'The length of first name can be maximum 20 characters')
     .optional(),
-  middleName: z
-    .string()
-    .optional(),
+  middleName: z.string().optional(),
   lastName: z
     .string()
     .min(3, 'The length of last name can be minimum 3 characters')

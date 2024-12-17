@@ -89,7 +89,7 @@ const deleteFacultyFromDB = async (id: string) => {
       { isDeleted: true },
       { new: true, session }
     );
-    
+
     if (!deletedUser) {
       throw new AppError(400, 'Failed to delete user');
     }
