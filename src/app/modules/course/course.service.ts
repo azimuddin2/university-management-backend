@@ -27,11 +27,24 @@ const getAllCourseFromDB = async (
 };
 
 const getSingleCourseFromDB = async (id: string) => {
-  const result = await Course.findById(id);
+  const result = await Course.findById(id).populate(
+    'preRequisiteCourses.course'
+  );
   return result;
 };
 
-const updateCourseIntoDB = async (id: string, payload: TCourse) => {};
+const updateCourseIntoDB = async (id: string, payload: Partial<TCourse>) => {
+  const { preRequisiteCourses, ...courseRemainingData } = payload;
+
+  // step1: Basic course info update
+  const updateBasicCourseInfo = await Course.findByIdAndUpdate(
+    id,
+    courseRemainingData,
+    { new: true, runValidators: true }
+  );
+
+  return updateBasicCourseInfo;
+};
 
 const deleteCourseFromDB = async (id: string) => {
   const result = await Course.findByIdAndUpdate(
