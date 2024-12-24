@@ -1,6 +1,7 @@
 import QueryBuilder from '../../builder/QueryBuilder';
 import AppError from '../../errors/AppError';
 import { AcademicSemester } from '../academicSemester/academicSemester.model';
+import { RegistrationStatus } from './semesterRegistration.constant';
 import { TSemesterRegistration } from './semesterRegistration.interface';
 import { SemesterRegistration } from './semesterRegistration.model';
 
@@ -83,6 +84,8 @@ const updateSemesterRegistrationIntoDB = async (
 
   // if the requested semester registration is ended, we will not update anything
   const currentSemesterStatus = isSemesterRegistrationExists.status;
+  const requestedStatus = payload?.status;
+
   if (currentSemesterStatus === 'ENDED') {
     throw new AppError(
       400,
@@ -90,8 +93,30 @@ const updateSemesterRegistrationIntoDB = async (
     );
   }
 
-  const result = await SemesterRegistration.findById(id, payload, {
+  // UPCOMING --> ONGOING --> ENDED
+  if (
+    currentSemesterStatus === RegistrationStatus.UPCOMING &&
+    requestedStatus === RegistrationStatus.ENDED
+  ) {
+    throw new AppError(
+      400,
+      `You can not directly change status from ${currentSemesterStatus} to ${requestedStatus}`
+    );
+  }
+
+  if (
+    currentSemesterStatus === RegistrationStatus.ONGOING &&
+    requestedStatus === RegistrationStatus.UPCOMING
+  ) {
+    throw new AppError(
+      400,
+      `You can not directly change status from ${currentSemesterStatus} to ${requestedStatus}`
+    );
+  }
+
+  const result = await SemesterRegistration.findByIdAndUpdate(id, payload, {
     new: true,
+    runValidators: true,
   });
 
   return result;

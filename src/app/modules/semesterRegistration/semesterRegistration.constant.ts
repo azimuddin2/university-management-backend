@@ -5,3 +5,9 @@ export const semesterRegistrationStatus: TStatus[] = [
   'ONGOING',
   'ENDED',
 ];
+
+export const RegistrationStatus = {
+  UPCOMING: 'UPCOMING',
+  ONGOING: 'ONGOING',
+  ENDED: 'ENDED',
+} as const;
