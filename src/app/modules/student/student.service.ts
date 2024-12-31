@@ -11,6 +11,7 @@ const getAllStudentsFromDB = async (
 ): Promise<TStudent[]> => {
   const studentQuery = new QueryBuilder(
     Student.find()
+      .populate('user')
       .populate('admissionSemester')
       .populate({
         path: 'academicDepartment',
@@ -112,6 +113,7 @@ const getAllStudentsFromDB = async (
 
 const getSingleStudentFromDB = async (id: string): Promise<TStudent | null> => {
   const student = await Student.findById(id)
+    .populate('user')
     .populate('admissionSemester')
     .populate({
       path: 'academicDepartment',
