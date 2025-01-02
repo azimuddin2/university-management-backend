@@ -5,6 +5,7 @@ import User from '../user/user.model';
 import { TChangePassword, TLoginUser } from './auth.interface';
 import config from '../../config';
 import { createToken } from './auth.utils';
+import { sendEmail } from '../../utils/sendEmail';
 
 const loginUser = async (payload: TLoginUser) => {
   const user = await User.isUserExistsByCustomId(payload.id);
@@ -179,7 +180,9 @@ const forgetPassword = async (userId: string) => {
     '10m'
   );
 
-  const resetLink = `${config.client_url}?id=${user.id}&token=${resetToken}`
+  const resetLink = `${config.client_url}?id=${user.id}&token=${resetToken}`;
+
+  sendEmail(user.email, resetLink);
 
   console.log(resetLink);
 };
