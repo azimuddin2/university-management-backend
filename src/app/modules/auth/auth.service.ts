@@ -153,8 +153,40 @@ const refreshToken = async (token: string) => {
   };
 };
 
+const forgetPassword = async (userId: string) => {
+  const user = await User.isUserExistsByCustomId(userId);
+
+  if (!user) {
+    throw new AppError(404, 'This user is not found!');
+  }
+
+  if (user?.isDeleted === true) {
+    throw new AppError(403, 'This user is deleted!');
+  }
+
+  if (user?.status === 'blocked') {
+    throw new AppError(403, 'This user is blocked!');
+  }
+
+  const jwtPayload = {
+    userId: user.id,
+    role: user.role,
+  };
+
+  const resetToken = createToken(
+    jwtPayload,
+    config.jwt_access_secret as string,
+    '10m'
+  );
+
+  const resetLink = `${config.client_url}?id=${user.id}&token=${resetToken}`
+
+  console.log(resetLink);
+};
+
 export const AuthServices = {
   loginUser,
   changePassword,
   refreshToken,
+  forgetPassword,
 };
