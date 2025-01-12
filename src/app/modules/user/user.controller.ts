@@ -41,6 +41,19 @@ const createAdmin = catchAsync(async (req, res) => {
   });
 });
 
+const changeStatus = catchAsync(async (req, res) => {
+  const { id } = req.params;
+
+  const result = await UserServices.changeStatusIntoDB(id, req.body);
+
+  sendResponse(res, {
+    statusCode: 201,
+    success: true,
+    message: 'Status is updated successfully!',
+    data: result,
+  });
+});
+
 const getMe = catchAsync(async (req, res) => {
   const { userId, role } = req.user;
 
@@ -58,5 +71,6 @@ export const UserControllers = {
   createStudent,
   createFaculty,
   createAdmin,
+  changeStatus,
   getMe,
 };

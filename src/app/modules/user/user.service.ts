@@ -172,6 +172,11 @@ const createAdminIntoDB = async (password: string, payload: TAdmin) => {
   }
 };
 
+const changeStatusIntoDB = async (id: string, payload: { status: string }) => {
+  const result = await User.findByIdAndUpdate(id, payload, { new: true });
+  return result;
+};
+
 const getMeFromDB = async (userId: string, role: string) => {
   let result = null;
 
@@ -194,5 +199,6 @@ export const UserServices = {
   createStudentIntoDB,
   createFacultyIntoDB,
   createAdminIntoDB,
+  changeStatusIntoDB,
   getMeFromDB,
 };
