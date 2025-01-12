@@ -4,7 +4,7 @@ import AppError from '../../errors/AppError';
 import User from '../user/user.model';
 import { TChangePassword, TLoginUser } from './auth.interface';
 import config from '../../config';
-import { createToken } from './auth.utils';
+import { createToken, verifyToken } from './auth.utils';
 import { sendEmail } from '../../utils/sendEmail';
 
 const loginUser = async (payload: TLoginUser) => {
@@ -109,10 +109,7 @@ const refreshToken = async (token: string) => {
     throw new AppError(401, 'You are not authorized!');
   }
 
-  const decoded = jwt.verify(
-    token,
-    config.jwt_refresh_secret as string
-  ) as JwtPayload;
+  const decoded = verifyToken(token, config.jwt_refresh_secret as string);
 
   const { userId, iat } = decoded;
 
@@ -209,10 +206,7 @@ const resetPassword = async (
     throw new AppError(401, 'You are not authorized!');
   }
 
-  const decoded = jwt.verify(
-    token,
-    config.jwt_access_secret as string
-  ) as JwtPayload;
+  const decoded = verifyToken(token, config.jwt_access_secret as string);
 
   if (payload.id !== decoded.userId) {
     throw new AppError(403, 'You are forbidden!');
