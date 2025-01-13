@@ -82,7 +82,11 @@ const createStudentIntoDB = async (
   }
 };
 
-const createFacultyIntoDB = async (password: string, payload: TFaculty) => {
+const createFacultyIntoDB = async (
+  file: any,
+  password: string,
+  payload: TFaculty
+) => {
   const userData: Partial<TUser> = {};
 
   // if password is not given, use default password
@@ -110,6 +114,11 @@ const createFacultyIntoDB = async (password: string, payload: TFaculty) => {
     // set generated id
     userData.id = await generateFacultyId();
 
+    const path = file.path;
+    const imageName = `${userData.id}${payload?.name?.firstName}`;
+
+    const { secure_url } = await sendImageToCloudinary(path, imageName);
+
     // create a user (transaction-1)
     const newUser = await User.create([userData], { session });
     if (!newUser.length) {
@@ -119,6 +128,7 @@ const createFacultyIntoDB = async (password: string, payload: TFaculty) => {
     // set id, _id as user
     payload.id = newUser[0].id;
     payload.user = newUser[0]._id;
+    payload.profileImg = secure_url as string;
 
     // create a faculty (transaction-2)
     const newFaculty = await Faculty.create([payload], { session });
@@ -137,7 +147,11 @@ const createFacultyIntoDB = async (password: string, payload: TFaculty) => {
   }
 };
 
-const createAdminIntoDB = async (password: string, payload: TAdmin) => {
+const createAdminIntoDB = async (
+  file: any,
+  password: string,
+  payload: TAdmin
+) => {
   const userData: Partial<TUser> = {};
 
   // if password is not given, use default password
@@ -156,6 +170,11 @@ const createAdminIntoDB = async (password: string, payload: TAdmin) => {
     // set generated id
     userData.id = await generateAdminId();
 
+    const path = file.path;
+    const imageName = `${userData.id}${payload?.name?.firstName}`;
+
+    const { secure_url } = await sendImageToCloudinary(path, imageName);
+
     // create a user (transaction-1)
     const newUser = await User.create([userData], { session });
     if (!newUser.length) {
@@ -165,6 +184,7 @@ const createAdminIntoDB = async (password: string, payload: TAdmin) => {
     // set id, _id as user
     payload.id = newUser[0].id;
     payload.user = newUser[0]._id;
+    payload.profileImg = secure_url as string;
 
     // create a admin (transaction-2)
     const newAdmin = await Admin.create([payload], { session });
