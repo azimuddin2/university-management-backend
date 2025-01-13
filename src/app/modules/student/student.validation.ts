@@ -66,7 +66,7 @@ const createStudentValidationSchema = z.object({
       bloodGroup: z
         .enum(['A+', 'A-', 'AB+', 'AB-', 'B+', 'B-', 'O+', 'O-'])
         .optional(),
-      profileImg: z.string().optional(),
+      // profileImg: z.string().optional(),
       presentAddress: z.string(),
       permanentAddress: z.string(),
       guardian: createGuardianValidationSchema,
