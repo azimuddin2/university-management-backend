@@ -5,6 +5,7 @@ import Student from '../student/student.model';
 import { TEnrolledCourse } from './enrolledCourse.interface';
 import { EnrolledCourse } from './enrolledCourse.model';
 import { SemesterRegistration } from '../semesterRegistration/semesterRegistration.model';
+import { Course } from '../course/course.model';
 
 const createEnrolledCourseIntoDB = async (
   userId: string,
@@ -38,11 +39,6 @@ const createEnrolledCourseIntoDB = async (
     throw new AppError(409, 'Student is already enrolled!');
   }
 
-  // check total credits exceeds maxCredit
-  const semesterRegistration = await SemesterRegistration.findById(
-    isOfferedCourseExists.semesterRegistration
-  ).select('maxCredit');
-
   const enrolledCourses = await EnrolledCourse.aggregate([
     {
       $match: {
@@ -75,11 +71,26 @@ const createEnrolledCourseIntoDB = async (
     },
   ]);
 
+  const semesterRegistration = await SemesterRegistration.findById(
+    isOfferedCourseExists.semesterRegistration
+  ).select('maxCredit');
+
+  const maxCredit = semesterRegistration?.maxCredit;
+
+  const course = await Course.findById(isOfferedCourseExists.course);
+  const currentCredits = course?.credits;
+
   // total enrolled credits + new enrolled course credit > maxCredit
   const totalCredits =
     enrolledCourses.length > 0 ? enrolledCourses[0].totalEnrolledCredits : 0;
 
-  // console.log(enrolledCourses);
+  if (
+    totalCredits &&
+    maxCredit &&
+    totalCredits + currentCredits > semesterRegistration?.maxCredit
+  ) {
+    throw new AppError(400, 'You have exceeded maximum number if credits!');
+  }
 
   const newEnrolledCourseData = {
     semesterRegistration: isOfferedCourseExists.semesterRegistration,
@@ -93,37 +104,37 @@ const createEnrolledCourseIntoDB = async (
     isEnrolled: true,
   };
 
-  // const session = await mongoose.startSession();
+  const session = await mongoose.startSession();
 
-  // try {
-  //   session.startTransaction();
+  try {
+    session.startTransaction();
 
-  //   const result = await EnrolledCourse.create([enrolledCourseData], {
-  //     session,
-  //   });
+    const result = await EnrolledCourse.create([newEnrolledCourseData], {
+      session,
+    });
 
-  //   if (!result) {
-  //     throw new AppError(400, 'Failed to enroll in this course!');
-  //   }
+    if (!result) {
+      throw new AppError(400, 'Failed to enroll in this course!');
+    }
 
-  //   const maxCapacity = isOfferedCourseExists.maxCapacity;
-  //   await OfferedCourse.findByIdAndUpdate(
-  //     offeredCourse,
-  //     {
-  //       maxCapacity: maxCapacity - 1,
-  //     },
-  //     { new: true }
-  //   );
+    const maxCapacity = isOfferedCourseExists.maxCapacity;
+    await OfferedCourse.findByIdAndUpdate(
+      offeredCourse,
+      {
+        maxCapacity: maxCapacity - 1,
+      },
+      { new: true }
+    );
 
-  //   await session.commitTransaction();
-  //   await session.endSession();
+    await session.commitTransaction();
+    await session.endSession();
 
-  //   return result;
-  // } catch (error: any) {
-  //   await session.abortTransaction();
-  //   await session.endSession();
-  //   throw new Error(error);
-  // }
+    return result;
+  } catch (error: any) {
+    await session.abortTransaction();
+    await session.endSession();
+    throw new Error(error);
+  }
 };
 
 export const EnrolledCourseServices = {
