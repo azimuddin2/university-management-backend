@@ -6,9 +6,7 @@ import { TAdmin } from './admin.interface';
 import { Admin } from './admin.model';
 import User from '../user/user.model';
 
-const getAllAdminsFromDB = async (
-  query: Record<string, unknown>
-): Promise<TAdmin[]> => {
+const getAllAdminsFromDB = async (query: Record<string, unknown>) => {
   const adminQuery = new QueryBuilder(Admin.find(), query)
     .search(AdminSearchableFields)
     .filter()
@@ -16,9 +14,10 @@ const getAllAdminsFromDB = async (
     .paginate()
     .fields();
 
+  const meta = await adminQuery.countTotal();
   const result = await adminQuery.modelQuery;
 
-  return result;
+  return { meta, result };
 };
 
 const getSingleAdminFromDB = async (id: string): Promise<TAdmin | null> => {

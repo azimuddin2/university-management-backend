@@ -6,9 +6,7 @@ import { TFaculty } from './faculty.interface';
 import { Faculty } from './faculty.model';
 import User from '../user/user.model';
 
-const getAllFacultiesFromDB = async (
-  query: Record<string, unknown>
-): Promise<TFaculty[]> => {
+const getAllFacultiesFromDB = async (query: Record<string, unknown>) => {
   const facultiesQuery = new QueryBuilder(
     Faculty.find().populate({
       path: 'academicDepartment',
@@ -24,9 +22,10 @@ const getAllFacultiesFromDB = async (
     .paginate()
     .fields();
 
+  const meta = await facultiesQuery.countTotal();
   const result = await facultiesQuery.modelQuery;
 
-  return result;
+  return { meta, result };
 };
 
 const getSingleFacultyFromDB = async (id: string): Promise<TFaculty | null> => {

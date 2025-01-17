@@ -6,9 +6,7 @@ import User from '../user/user.model';
 import QueryBuilder from '../../builder/QueryBuilder';
 import { studentSearchableFields } from './student.constant';
 
-const getAllStudentsFromDB = async (
-  query: Record<string, unknown>
-): Promise<TStudent[]> => {
+const getAllStudentsFromDB = async (query: Record<string, unknown>) => {
   const studentQuery = new QueryBuilder(
     Student.find()
       .populate('user')
@@ -27,9 +25,13 @@ const getAllStudentsFromDB = async (
     .paginate()
     .fields();
 
+  const meta = await studentQuery.countTotal();
   const result = await studentQuery.modelQuery;
 
-  return result;
+  return {
+    meta,
+    result,
+  };
 
   /*
   const queryObj = { ...query };
