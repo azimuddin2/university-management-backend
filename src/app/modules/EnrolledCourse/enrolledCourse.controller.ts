@@ -3,7 +3,7 @@ import sendResponse from '../../utils/sendResponse';
 import { EnrolledCourseServices } from './enrolledCourse.service';
 
 const createEnrolledCourse = catchAsync(async (req, res) => {
-  const userId = req.user.userId;
+  const { userId } = req.user;
 
   const result = await EnrolledCourseServices.createEnrolledCourseIntoDB(
     userId,
@@ -19,17 +19,17 @@ const createEnrolledCourse = catchAsync(async (req, res) => {
 });
 
 const updateEnrolledCourse = catchAsync(async (req, res) => {
-  const facultyId = req.user.id;
+  const { userId } = req.user;
 
   const result = await EnrolledCourseServices.updateEnrolledCourseIntoDB(
-    facultyId,
+    userId,
     req.body
   );
 
   sendResponse(res, {
     statusCode: 201,
     success: true,
-    message: 'Student is enrolled successfully',
+    message: 'Marks is updated successfully',
     data: result,
   });
 });
