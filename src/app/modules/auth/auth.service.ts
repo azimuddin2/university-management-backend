@@ -4,8 +4,9 @@ import AppError from '../../errors/AppError';
 import User from '../user/user.model';
 import { TChangePassword, TLoginUser } from './auth.interface';
 import config from '../../config';
-import { createToken, verifyToken } from './auth.utils';
+import { createToken } from './auth.utils';
 import { sendEmail } from '../../utils/sendEmail';
+import { verifyToken } from '../../utils/verifyToken';
 
 const loginUser = async (payload: TLoginUser) => {
   const user = await User.isUserExistsByCustomId(payload.id);

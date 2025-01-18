@@ -1,10 +1,11 @@
-import jwt, { JwtPayload } from 'jsonwebtoken';
+import { JwtPayload } from 'jsonwebtoken';
 import { NextFunction, Request, Response } from 'express';
 import catchAsync from '../utils/catchAsync';
 import AppError from '../errors/AppError';
 import config from '../config';
 import { TUserRole } from '../modules/user/user.interface';
 import User from '../modules/user/user.model';
+import { verifyToken } from '../utils/verifyToken';
 
 const auth = (...requiredRoles: TUserRole[]) => {
   return catchAsync(async (req: Request, res: Response, next: NextFunction) => {
@@ -14,10 +15,7 @@ const auth = (...requiredRoles: TUserRole[]) => {
       throw new AppError(401, 'You are not authorized!');
     }
 
-    const decoded = jwt.verify(
-      token,
-      config.jwt_access_secret as string
-    ) as JwtPayload;
+    const decoded = verifyToken(token, config.jwt_access_secret as string);
 
     const { userId, role, iat } = decoded;
 
