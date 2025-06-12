@@ -1,4 +1,4 @@
-# 📌 University Management System - Back-end Development
+## 📌 University Management System - Back-end Development
 
 ## 🚀 MERN Stack Development
 
@@ -259,6 +259,5 @@ This project is licensed under the MIT License.
 ---
 
 ## 👨‍💻 Contributors
-- **[MD. AZIM UDDIN]**
+- **MD. AZIM UDDIN**
 
-Feel free to contribute to improve this project! 🚀
