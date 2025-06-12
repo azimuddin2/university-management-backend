@@ -8,6 +8,7 @@ const router = express.Router();
 
 router.post(
   '/create-academic-semester',
+  auth('admin'),
   validateRequest(
     AcademicSemesterValidations.createAcademicSemesterValidationSchema
   ),
@@ -27,6 +28,7 @@ router.get(
 
 router.patch(
   '/:semesterId',
+  auth('admin'),
   validateRequest(
     AcademicSemesterValidations.updateAcademicSemesterValidationSchema
   ),
